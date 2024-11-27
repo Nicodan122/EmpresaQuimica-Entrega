@@ -40,8 +40,9 @@
                         </button>
                     </div>
                     <div class="mt-auto">
-                        <button class="btn btn-primary mt-3 agregar-carrito" data-id="{{ producto.id }}" data-precio="{{ producto.precio }}">
-                            <i class="fas fa-heart"></i> WishList
+                        <!-- Botón para agregar productos a la wishlist -->
+                        <button class="btn btn-primary mt-3 agregar-wishlist" data-id="{{ producto.id }}">
+                            <i class="fas fa-heart"></i> Agregar a Wishlist
                         </button>
                     </div>
                 </div>
@@ -68,6 +69,7 @@
 
         actualizarBadgeCarrito();
 
+        // Manejar clics en los botones de agregar al carrito
         document.querySelectorAll('.agregar-carrito').forEach(function(button) {
             button.addEventListener('click', function() {
                 const productoId = this.getAttribute('data-id');
@@ -96,6 +98,39 @@
                 } else {
                     alert('Por favor, selecciona una cantidad válida.');
                 }
+            });
+        });
+
+        // Manejar clics en los botones de agregar a la wishlist
+        document.querySelectorAll('.agregar-wishlist').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const productoId = this.getAttribute('data-id');
+
+                // Realiza la solicitud POST al servidor
+                fetch('/wishlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ producto_id: productoId }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al agregar a la wishlist');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        alert(`Error: ${data.error}`);
+                    } else {
+                        alert('Producto agregado a la wishlist.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ocurrió un error al intentar agregar el producto a la wishlist.');
+                });
             });
         });
     });

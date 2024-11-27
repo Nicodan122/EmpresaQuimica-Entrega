@@ -1,6 +1,6 @@
 {% extends 'layoutDashboard.html' %}
 
-{% block title %}WhishList{% endblock %}
+{% block title %}Wishlist{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -10,7 +10,7 @@
         <thead class="thead-dark">
             <tr>
                 <th>ID</th>
-                <th>Id Producto</th>
+                <th>Nombre del Producto</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -18,7 +18,7 @@
             {% for item in wishlist %}
             <tr>
                 <td>{{ item.id }}</td>
-                <td>{{ item.producto_id }}</td>
+                <td>{{ item.nombre_producto }}</td>
                 <td>
                     <form action="{{ url_for('wishlist.delete_from_wishlist', item_id=item.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este elemento?');">
                         <input type="hidden" name="_method" value="DELETE">
