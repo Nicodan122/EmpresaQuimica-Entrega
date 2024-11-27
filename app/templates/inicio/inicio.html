@@ -6,6 +6,16 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4">Bienvenido a Nuestra Tienda</h2>
 
+    <div class="mb-3">
+        <label for="filtroPrecio" class="form-label">Filtrar por Precio:</label>
+        <select class="form-control" id="filtroPrecio">
+            <option value="0">Todos los precios</option>
+            <option value="1">Menos de $100</option>
+            <option value="2">$100 - $150</option>
+            <option value="3">Más de $150</option>
+        </select>
+    </div>
+
     <div class="d-flex justify-content-end mb-3">
         <a href="{{ url_for('inicio.ver_carrito') }}" class="btn btn-success position-relative mr-2" id="btnVerCarrito">
             Ver Carrito
@@ -16,9 +26,9 @@
         </a>
     </div>
 
-    <div class="row">
+    <div class="row" id="productos">
         {% for producto in productos %}
-        <div class="col-md-3 mb-4">
+        <div class="col-md-3 mb-4 producto" data-precio="{{ producto.precio }}">
             <div class="card h-100">
                 <img src="{{ producto.imagen if producto.imagen else 'ruta/a/imagen_default.jpg' }}" 
                      class="card-img-top" 
@@ -40,7 +50,6 @@
                         </button>
                     </div>
                     <div class="mt-auto">
-                        
                         <button class="btn btn-primary mt-3 agregar-wishlist" data-id="{{ producto.id }}">
                             <i class="fas fa-heart"></i> Agregar a Wishlist
                         </button>
@@ -67,6 +76,30 @@
         }
 
         actualizarBadgeCarrito();
+
+        
+        const filtroPrecio = document.getElementById('filtroPrecio');
+        
+        filtroPrecio.addEventListener('change', function() {
+            const seleccion = filtroPrecio.value;
+            const productos = document.querySelectorAll('.producto');
+            
+            productos.forEach(function(producto) {
+                const precio = parseFloat(producto.getAttribute('data-precio'));
+
+                
+                if (
+                    (seleccion == "1" && precio < 100) ||
+                    (seleccion == "2" && precio >= 100 && precio <= 150) ||
+                    (seleccion == "3" && precio > 150) ||
+                    seleccion == "0" 
+                ) {
+                    producto.style.display = 'block';
+                } else {
+                    producto.style.display = 'none';
+                }
+            });
+        });
 
         
         document.querySelectorAll('.agregar-carrito').forEach(function(button) {
@@ -100,12 +133,11 @@
             });
         });
 
-        
+
         document.querySelectorAll('.agregar-wishlist').forEach(function(button) {
             button.addEventListener('click', function() {
                 const productoId = this.getAttribute('data-id');
 
-                
                 fetch('/wishlist', {
                     method: 'POST',
                     headers: {
