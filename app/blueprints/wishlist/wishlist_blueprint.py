@@ -25,7 +25,9 @@ def add_to_wishlist():
         result = add_item(usuario['id'], producto_id)
         if "error" in result:
             return jsonify(result), 400
-        return jsonify({"message": "Elemento agregado exitosamente", "id": result["id"]}), 201
+        return jsonify({"message": "Producto agregado exitosamente a la wishlist.", "id": result["id"]}), 201
+    except KeyError:
+        return jsonify({"error": "Usuario no autenticado o sesión inválida"}), 401
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -38,5 +40,3 @@ def delete_from_wishlist(item_id):
         return jsonify({"message": "Elemento eliminado exitosamente"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-

@@ -1,22 +1,17 @@
-from app.services.productos_service import ProductoService
 import mysql.connector
 from config import db_config
+from app.services.productos_service import ProductoService
 
 def get_all_items(usuario_id):
-    """Obtiene todos los elementos de la tabla wishlist, incluyendo los nombres de productos."""
     conn = None
     cursor = None
     try:
-        # Obtener los productos de JSONBin
         productos = ProductoService.obtener_productos()
-
-        # Conexión a la base de datos para la wishlist
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM wishlist WHERE usuario_id = %s", (usuario_id,))
         wishlist = cursor.fetchall()
 
-        # Enriquecer los datos de la wishlist con los nombres de los productos
         for item in wishlist:
             producto = next((p for p in productos if p["id"] == str(item["producto_id"])), None)
             item["nombre_producto"] = producto["nombre"] if producto else "Producto desconocido"
@@ -29,14 +24,11 @@ def get_all_items(usuario_id):
             conn.close()
 
 def add_item(usuario_id, producto_id):
-    """Agrega un elemento a la tabla wishlist."""
     conn = None
     cursor = None
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-        
-        # Prevenir duplicados (opcional)
         cursor.execute(
             "SELECT COUNT(*) FROM wishlist WHERE usuario_id = %s AND producto_id = %s",
             (usuario_id, producto_id)
@@ -59,7 +51,6 @@ def add_item(usuario_id, producto_id):
             conn.close()
 
 def delete_item(item_id):
-    """Elimina un elemento de la tabla wishlist por su ID."""
     conn = None
     cursor = None
     try:

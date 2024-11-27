@@ -40,7 +40,7 @@
                         </button>
                     </div>
                     <div class="mt-auto">
-                        <!-- Botón para agregar productos a la wishlist -->
+                        
                         <button class="btn btn-primary mt-3 agregar-wishlist" data-id="{{ producto.id }}">
                             <i class="fas fa-heart"></i> Agregar a Wishlist
                         </button>
@@ -50,7 +50,6 @@
         </div>
         {% endfor %}
     </div>
-
 </div>
 
 <script>
@@ -69,7 +68,7 @@
 
         actualizarBadgeCarrito();
 
-        // Manejar clics en los botones de agregar al carrito
+        
         document.querySelectorAll('.agregar-carrito').forEach(function(button) {
             button.addEventListener('click', function() {
                 const productoId = this.getAttribute('data-id');
@@ -101,12 +100,12 @@
             });
         });
 
-        // Manejar clics en los botones de agregar a la wishlist
+        
         document.querySelectorAll('.agregar-wishlist').forEach(function(button) {
             button.addEventListener('click', function() {
                 const productoId = this.getAttribute('data-id');
 
-                // Realiza la solicitud POST al servidor
+                
                 fetch('/wishlist', {
                     method: 'POST',
                     headers: {
@@ -116,20 +115,18 @@
                 })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Error al agregar a la wishlist');
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Error desconocido al agregar a la wishlist');
+                        });
                     }
                     return response.json();
                 })
                 .then(data => {
-                    if (data.error) {
-                        alert(`Error: ${data.error}`);
-                    } else {
-                        alert('Producto agregado a la wishlist.');
-                    }
+                    alert(data.message || 'Producto agregado a la wishlist.');
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Ocurrió un error al intentar agregar el producto a la wishlist.');
+                    alert(`Error: ${error.message}`);
                 });
             });
         });
