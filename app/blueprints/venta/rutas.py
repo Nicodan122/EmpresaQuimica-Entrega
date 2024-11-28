@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from app.services.ventas_service import VentasService
 import uuid
 
@@ -104,3 +104,42 @@ def ver_estadisticas():
                            ventas_por_mes=estadisticas['ventas_por_mes'],
                            usuarios=estadisticas['usuarios'],
                            ventas_por_usuario=estadisticas['ventas_por_usuario'])
+
+@ventas_bp.route('/historial_ventas', methods=['GET'])
+def ver_historial_ventas():
+    """
+    Muestra el historial de ventas del usuario actualmente en sesión.
+    """
+    try:
+        # Obtener el usuario actual desde la sesión
+        usuario = session.get('usuario')  
+        if not usuario:
+            flash("Debes iniciar sesión para ver tu historial de ventas.", "danger")
+            return redirect(url_for('autenticacion.login'))
+
+        id_usuario = str(usuario['id'])  # Convertir a cadena para evitar conflictos
+
+        # Obtener las ventas del usuario
+        ventas = [venta for venta in VentasService.obtener_ventas() if str(venta['idUsuario']) == id_usuario]
+
+        detalles_ventas = []
+        for venta in ventas:
+            detalles = VentasService.obtener_detalles_venta_por_id_venta(venta['id'])
+            
+            # Convertir precios y subtotales a números para cálculos
+            for detalle in detalles:
+                detalle['precio'] = float(detalle['precio'])
+                detalle['cantidad'] = int(detalle['cantidad'])
+                detalle['subtotal'] = detalle['precio'] * detalle['cantidad']
+
+            detalles_ventas.append({
+                "venta": venta,
+                "detalles": detalles
+            })
+
+        return render_template('venta/historial_ventas.html', historial=detalles_ventas)
+    except Exception as e:
+        flash(f"Error al obtener el historial de ventas: {str(e)}", "danger")
+        return redirect(url_for('inicio.index'))
+
+
