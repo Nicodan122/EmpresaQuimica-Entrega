@@ -41,13 +41,4 @@ def delete_from_wishlist(item_id):
     except Exception as e:
         flash(f"Ocurrió un error: {str(e)}", "danger")
 
-    return redirect(url_for('usuario.ver_wishlist'))
-
-'''
-    try:
-        rows_deleted = delete_item(item_id)
-        if rows_deleted == 0:
-            return jsonify({"error": "Elemento no encontrado"}), 404
-        return jsonify({"message": "Elemento eliminado exitosamente"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return redirect(url_for('wishlist.get_wishlist'))
