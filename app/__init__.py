@@ -1,4 +1,5 @@
 from flask import Flask, request
+from config import SECRET_KEY
 from app.blueprints.autenticacion.rutas import autenticacion_bp
 from app.blueprints.dashboard.rutas import dashboard_bp
 from app.blueprints.usuario.rutas import usuario_bp
@@ -9,8 +10,8 @@ from app.blueprints.wishlist.wishlist_blueprint import wishlist_bp
 
 def create_app():
     app = Flask(__name__)
-
-    app.config['SECRET_KEY'] = '$2a$10$l3Zw/L9LWrrPSNpWfQCTCODDGB2PsYk3/D.GYyqtAfRrh.WZKmP.W'
+    
+    app.config['SECRET_KEY'] = SECRET_KEY
 
     
     @app.before_request
