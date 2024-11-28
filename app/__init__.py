@@ -11,16 +11,8 @@ from app.blueprints.wishlist.wishlist_blueprint import wishlist_bp
 def create_app():
     app = Flask(__name__)
     
-    app.config['SECRET_KEY'] = SECRET_KEY
-
     
-    @app.before_request
-    def method_override():
-        if request.method == 'POST' and '_method' in request.form:
-            method = request.form['_method'].upper()
-            print(f"Interceptando POST. Transformando a: {method}")
-            if method in ['PUT', 'DELETE']:
-                request.environ['REQUEST_METHOD'] = method
+    app.config['SECRET_KEY'] = SECRET_KEY
 
 
     # Registro de Blueprints

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
 from app.services.wishlist_service import get_all_items, add_item, delete_item
 
 wishlist_bp = Blueprint('wishlist', __name__)
@@ -33,6 +33,17 @@ def add_to_wishlist():
 
 @wishlist_bp.route('/wishlist/<int:item_id>', methods=['POST'])
 def delete_from_wishlist(item_id):
+    try:
+        if 1 == delete_item(item_id):
+            flash("Wishlist item eliminado exitosamente.", "success")
+        else:
+            flash("Error al eliminar el item de wishlist.", "danger")
+    except Exception as e:
+        flash(f"Ocurrió un error: {str(e)}", "danger")
+
+    return redirect(url_for('usuario.ver_wishlist'))
+
+'''
     try:
         rows_deleted = delete_item(item_id)
         if rows_deleted == 0:
