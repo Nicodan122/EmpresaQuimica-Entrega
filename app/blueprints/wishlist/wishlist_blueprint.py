@@ -31,7 +31,7 @@ def add_to_wishlist():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@wishlist_bp.route('/wishlist/<int:item_id>', methods=['DELETE'])
+@wishlist_bp.route('/wishlist/<int:item_id>', methods=['POST'])
 def delete_from_wishlist(item_id):
     try:
         rows_deleted = delete_item(item_id)

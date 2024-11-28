@@ -21,7 +21,7 @@
                 <td>{{ item.nombre_producto }}</td>
                 <td>
                     <form action="{{ url_for('wishlist.delete_from_wishlist', item_id=item.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este elemento?');">
-                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_method" value="POST">
                         <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
                     </form>
                 </td>
